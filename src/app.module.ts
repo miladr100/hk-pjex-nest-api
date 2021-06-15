@@ -8,7 +8,9 @@ import { ProductsModule } from './products/products.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DATABASE_URL),
+    MongooseModule.forRoot(
+      'mongodb+srv://pjex-nest-api:OZDssVWseDCf7Sel@pjex-api-prod.ljqx8.mongodb.net/pjex-api-prod-db?retryWrites=true&w=majority',
+    ),
     ProductsModule,
   ],
   controllers: [AppController],
