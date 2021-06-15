@@ -6,7 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './products/products.module';
 
 @Module({
-  imports: [],
+  imports: [
+    MongooseModule.forRoot(
+      'mongodb+srv://pjex-nest-api:OZDssVWseDCf7Sel@pjex-api-prod.ljqx8.mongodb.net/pjex-api-prod-db?retryWrites=true&w=majority',
+    ),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
