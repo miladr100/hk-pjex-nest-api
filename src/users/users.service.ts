@@ -63,8 +63,13 @@ export class UsersService {
   }
 
   async deleteUser(id: string) {
+    await this.findUserAsync(id);
     try {
       await this.userModel.deleteOne({ _id: id }).exec();
+      return {
+        statusCode: 200,
+        message: 'Usuario deletado.',
+      };
     } catch (err) {
       throw new NotFoundException('Usuário não encontrado.');
     }

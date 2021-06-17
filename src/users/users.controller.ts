@@ -49,7 +49,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async removeUser(@Param('id') userId: string) {
-    await this.usersService.deleteUser(userId);
-    return null;
+    const respose = await this.usersService.deleteUser(userId);
+    return respose;
   }
 }
