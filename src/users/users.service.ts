@@ -1,15 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { User } from './user.model';
+import { User, UserDocument } from './user.entity';
+import { UserDto } from './user.model';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async createUser(name: string, email: string, password: string) {
-    const createdUser = new this.userModel({ name, email, password });
+  async createUser(userDto: UserDto) {
+    const findUserExists = await this.getUserByEmail(userDto.email);
+    if (findUserExists) {
+      throw new HttpException('Este e-mail já existe.', 422);
+    }
+    const createdUser = new this.userModel(userDto);
     const result = await createdUser.save();
     return result.id as string;
   }
@@ -21,7 +26,7 @@ export class UsersService {
       name: user.name,
       email: user.email,
       password: user.password,
-    })) as User[];
+    })) as UserDto[];
   }
 
   async getUserById(id: string) {
@@ -31,31 +36,30 @@ export class UsersService {
       name: user.name,
       email: user.email,
       password: user.password,
-    } as User;
+    } as UserDto;
   }
 
   async getUserByEmail(userEmail: string) {
     const user = await this.userModel.findOne({ email: userEmail }).exec();
+    if (!user) return null;
     return {
       id: user.id,
       name: user.name,
       email: user.email,
       password: user.password,
-    } as User;
+    } as UserDto;
   }
 
-  async updateUser(id: string, name: string, email: string, password: string) {
-    const updatedUser = await this.findUserAsync(id);
-    if (name) {
-      updatedUser.name = name;
+  async updateUser(prodId: string, userDto: UserDto) {
+    if (Object.keys(userDto).length == 0)
+      throw new HttpException('Erro, nenhum dado enviado.', 400);
+    try {
+      return this.userModel
+        .updateOne({ _id: prodId }, { $set: userDto }, { new: true })
+        .exec();
+    } catch (err) {
+      throw new HttpException('Erro do servidor.', 500);
     }
-    if (email) {
-      updatedUser.email = email;
-    }
-    if (password) {
-      updatedUser.password = password;
-    }
-    updatedUser.save();
   }
 
   async deleteUser(id: string) {
@@ -66,11 +70,12 @@ export class UsersService {
     }
   }
 
-  private async findUserAsync(id: string): Promise<User> {
+  private async findUserAsync(id: string): Promise<UserDocument> {
     let user;
     try {
       user = await this.userModel.findById(id);
-      return user;
+      if (user) return user;
+      else throw new NotFoundException('Usuário não encontrado.');
     } catch (err) {
       throw new NotFoundException('Usuário não encontrado.');
     }

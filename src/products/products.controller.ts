@@ -11,13 +11,13 @@ import {
 import { ProductDto } from './product.model';
 
 import { ProductsService } from './products.service';
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  //   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   async addProduct(@Body() createProductDto: ProductDto) {
     const generatedId = await this.productsService.createProduct(
@@ -26,20 +26,21 @@ export class ProductsController {
     return { id: generatedId };
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllProducts() {
     const products = await this.productsService.findAllProducts();
     return products;
   }
 
-  //   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getProduct(@Param('id') prodId: string) {
     const product = await this.productsService.findOneProduct(prodId);
     return product;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateProduct(
     @Param('id') prodId: string,
@@ -48,7 +49,7 @@ export class ProductsController {
     return this.productsService.updateProduct(prodId, createProductDto);
   }
 
-  //   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async removeProduct(@Param('id') prodId: string) {
     await this.productsService.deleteProduct(prodId);
