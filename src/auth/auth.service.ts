@@ -2,8 +2,14 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { BcryptService } from 'src/bcrypt/bcrypt.service';
+import { sign } from 'jsonwebtoken';
+import { jwtConstants } from './constants';
+
 @Injectable()
 export class AuthService {
+  blackListTokens: Array<string> = [];
+  isVerifyingArrayOfBlacklistedTokens = false;
+
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
@@ -33,7 +39,56 @@ export class AuthService {
   async login(user: any) {
     const payload = { email: user.email, sub: user.id };
     return {
+      user_id: user.id,
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async verifyUser(token: string) {
+    if (!(await this.verifyTokenAsync(token)))
+      throw new HttpException('Token inválido', HttpStatus.BAD_REQUEST);
+
+    try {
+      const decoded = await this.jwtService.verifyAsync(token, {
+        secret: jwtConstants.secret,
+      });
+
+      const user = await this.userService.getUserByEmail(decoded.email);
+      return { id: user.id, name: user.name, email: user.email };
+    } catch (err) {
+      if (err.name == 'JsonWebTokenError')
+        throw new HttpException('Token inválido', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async logout(token: string) {
+    this.blackListTokens.push(token);
+    return {
+      statusCode: 200,
+      message: 'Usuario deslogado.',
+    };
+  }
+
+  async verifyTokenAsync(token: string) {
+    try {
+      await this.jwtService.verifyAsync(token);
+      const isInvalid = this.blackListTokens.find(
+        (invalidToken) => token == invalidToken,
+      );
+      return !isInvalid;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  removeExpiredTokensFromBlackList() {
+    if (!this.isVerifyingArrayOfBlacklistedTokens) {
+      // this.blackListTokens.reduce(token);
+      // await this.jwtService.verifyAsync(token);
+    }
+  }
+
+  // async signPayload(user: any) {
+  //   return sign(user, jwtConstants.secret, { expiresIn: '3600s' });
+  // }
 }
