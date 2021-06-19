@@ -2,6 +2,7 @@ import {
   Controller,
   UseGuards,
   Body,
+  Headers,
   Request,
   Post,
   Get,
@@ -20,8 +21,8 @@ export class AuthController {
   }
 
   @Get('auth/user')
-  async getUser(@Body('token') token: string) {
-    return await this.authService.verifyUser(token);
+  async getUser(@Headers('Authorization') token: string) {
+    return await this.authService.verifyUser(token.split(' ')[1]);
   }
 
   @Post('auth/logout')
