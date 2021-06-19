@@ -4,7 +4,7 @@ import {
   Body,
   Get,
   Param,
-  Patch,
+  Put,
   Delete,
   UseGuards,
 } from '@nestjs/common';
@@ -23,12 +23,12 @@ export class UsersController {
     return { id: generatedId };
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async getAllUsers() {
-    const users = await this.usersService.getUsers();
-    return users;
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get()
+  // async getAllUsers() {
+  //   const users = await this.usersService.getUsers();
+  //   return users;
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
@@ -37,7 +37,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
+  @Put(':id')
   async updateUser(
     @Param('id') userId: string,
     @Body() createUserDto: UserDto,

@@ -2,14 +2,10 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { BcryptService } from 'src/bcrypt/bcrypt.service';
-import { sign } from 'jsonwebtoken';
 import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
-  blackListTokens: Array<string> = [];
-  isVerifyingArrayOfBlacklistedTokens = false;
-
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
@@ -49,11 +45,10 @@ export class AuthService {
       throw new HttpException('Token inválido', HttpStatus.BAD_REQUEST);
 
     try {
-      const decoded = await this.jwtService.verifyAsync(token, {
+      const decoded = this.jwtService.verify(token, {
         secret: jwtConstants.secret,
       });
-
-      const user = await this.userService.getUserByEmail(decoded.email);
+      const user = await this.userService.getUserByEmail(decoded.email.email);
       return { id: user.id, name: user.name, email: user.email };
     } catch (err) {
       if (err.name == 'JsonWebTokenError')
@@ -62,29 +57,20 @@ export class AuthService {
   }
 
   async logout(token: string) {
-    this.blackListTokens.push(token);
-    return {
-      statusCode: 200,
-      message: 'Usuario deslogado.',
-    };
+    if (token)
+      return {
+        statusCode: 200,
+        message: 'Usuario deslogado.',
+      };
+    throw new HttpException('Erro, token inválido.', HttpStatus.BAD_REQUEST);
   }
 
   async verifyTokenAsync(token: string) {
     try {
       await this.jwtService.verifyAsync(token);
-      const isInvalid = this.blackListTokens.find(
-        (invalidToken) => token == invalidToken,
-      );
-      return !isInvalid;
+      return true;
     } catch (err) {
       return false;
-    }
-  }
-
-  removeExpiredTokensFromBlackList() {
-    if (!this.isVerifyingArrayOfBlacklistedTokens) {
-      // this.blackListTokens.reduce(token);
-      // await this.jwtService.verifyAsync(token);
     }
   }
 
