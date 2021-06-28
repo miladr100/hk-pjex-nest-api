@@ -85,7 +85,7 @@ export class UsersService {
     }
   }
 
-  private async findUserAsync(id: string): Promise<UserDocument> {
+  async findUserAsync(id: string): Promise<UserDocument> {
     let user;
     try {
       user = await this.userModel.findById(id);

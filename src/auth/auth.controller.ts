@@ -10,22 +10,22 @@ import {
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
+  @Post('login')
   async login(@Body() userEmail: string, @Body() userPassword: string) {
     return this.authService.login({ email: userEmail, password: userPassword });
   }
 
-  @Get('auth/user')
+  @Get('user')
   async getUser(@Headers('Authorization') token: string) {
     return await this.authService.verifyUser(token.split(' ')[1]);
   }
 
-  @Post('auth/logout')
+  @Post('logout')
   async logoutUser(@Headers('Authorization') token: string) {
     return await this.authService.logout(token);
   }
