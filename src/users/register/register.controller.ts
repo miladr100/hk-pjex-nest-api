@@ -22,7 +22,6 @@ export class UserRegisterController {
   @Get(':id')
   async getUserRegister(@Param('id') userId: string) {
     const response = await this.userRegisterService.getUserRegister(userId);
-    delete response.updated_at;
     return response;
   }
 
