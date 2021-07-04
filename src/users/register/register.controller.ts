@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Get,
   Delete,
 } from '@nestjs/common';
 
@@ -16,6 +17,14 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 @Controller('users/register')
 export class UserRegisterController {
   constructor(private userRegisterService: UserRegisterService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getUserRegister(@Param('id') userId: string) {
+    const response = await this.userRegisterService.getUserRegister(userId);
+    delete response.updated_at;
+    return response;
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post(':id')

@@ -14,6 +14,22 @@ export class UserRegisterService {
     private userService: UsersService,
   ) {}
 
+  async getUserRegister(userId: string) {
+    await this.userService.findUserAsync(userId);
+
+    const userRegister = await this.userRegisterModel
+      .findOne({ user_id: userId })
+      .exec();
+
+    if (!userRegister)
+      throw new HttpException(
+        'Este usuário não tem registro.',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+
+    return this.getUserRegisterData(userRegister);
+  }
+
   async saveUserRegister(userRegisterDto: UserRegisterDto, userId: string) {
     await this.userService.findUserAsync(userId);
 
@@ -77,5 +93,24 @@ export class UserRegisterService {
 
     await this.userRegisterModel.deleteOne({ _id: userRegister._id }).exec();
     return await this.userService.deleteUser(userId);
+  }
+
+  getUserRegisterData(data: UserRegisterDocument): UserRegisterDto {
+    return {
+      id: data._id,
+      user_id: data.user_id,
+      nationality: data.nationality,
+      birthdate: data.birthdate,
+      phone: data.phone,
+      schoolinfo: data.schoolinfo,
+      languageinfo: data.languageinfo,
+      zipcode: data.zipcode,
+      neighborhood: data.neighborhood,
+      street: data.street,
+      state: data.state,
+      city: data.city,
+      number: data.number,
+      complement: data.complement,
+    };
   }
 }
