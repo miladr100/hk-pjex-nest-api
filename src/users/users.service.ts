@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from './user.entity';
 import { BcryptService } from 'src/bcrypt/bcrypt.service';
 import { UserDto } from './user.dto';
+import { UserRegisterService } from './register/register.service';
 
 @Injectable()
 export class UsersService {

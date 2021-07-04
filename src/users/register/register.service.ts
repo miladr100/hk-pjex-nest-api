@@ -46,6 +46,8 @@ export class UserRegisterService {
       .findOne({ user_id: userId })
       .exec();
 
+    userRegisterDto = { ...userRegisterDto, updated_at: new Date() };
+
     try {
       return this.userRegisterModel
         .updateOne(
@@ -60,5 +62,20 @@ export class UserRegisterService {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
+  }
+
+  async deleteUserRegister(userId: string) {
+    const userRegister = await this.userRegisterModel
+      .findOne({ user_id: userId })
+      .exec();
+
+    if (!userRegister)
+      throw new HttpException(
+        'Este usuário não existe.',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+
+    await this.userRegisterModel.deleteOne({ _id: userRegister._id }).exec();
+    return await this.userService.deleteUser(userId);
   }
 }

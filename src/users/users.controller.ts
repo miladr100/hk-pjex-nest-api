@@ -46,10 +46,10 @@ export class UsersController {
     return null;
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  async removeUser(@Param('id') userId: string) {
-    const respose = await this.usersService.deleteUser(userId);
-    return respose;
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Delete(':id')
+  // async removeUser(@Param('id') userId: string) {
+  //   const respose = await this.usersService.deleteUser(userId);
+  //   return respose;
+  // }
 }

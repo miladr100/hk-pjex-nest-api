@@ -14,6 +14,5 @@ import { UsersModule } from '../users.module';
   ],
   controllers: [UserRegisterController],
   providers: [UserRegisterService],
-  exports: [],
 })
 export class UserRegisterModule {}

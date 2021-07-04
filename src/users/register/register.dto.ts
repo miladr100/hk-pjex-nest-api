@@ -35,4 +35,6 @@ export class UserRegisterDto {
   number?: number;
 
   complement?: string;
+
+  updated_at?: Date;
 }

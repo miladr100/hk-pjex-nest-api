@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Delete,
 } from '@nestjs/common';
 
 import { UserRegisterDto } from './register.dto';
@@ -40,5 +41,12 @@ export class UserRegisterController {
       userId,
     );
     return null;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async removeUser(@Param('id') userId: string) {
+    const respose = await this.userRegisterService.deleteUserRegister(userId);
+    return respose;
   }
 }
