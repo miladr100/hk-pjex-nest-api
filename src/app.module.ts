@@ -1,7 +1,9 @@
+import { CloudinaryModule } from './utils/cloudinary/cloudinary.module';
+import { UtilsModule } from './utils/utils.module';
 import { BcryptModule } from './bcrypt/bcrypt.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UserRegisterModule } from './users/register/register.module';
@@ -12,6 +14,9 @@ import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
+    CloudinaryModule,
+    UtilsModule,
+    HttpModule,
     BcryptModule,
     ConfigModule.forRoot(),
     AuthModule,

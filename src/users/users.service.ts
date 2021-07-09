@@ -87,7 +87,7 @@ export class UsersService {
   }
 
   async findUserAsync(id: string): Promise<UserDocument> {
-    let user;
+    let user: any;
     try {
       user = await this.userModel.findById(id);
       if (user) return user;
