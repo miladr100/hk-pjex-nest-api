@@ -49,7 +49,13 @@ export class AuthService {
         secret: jwtConstants.secret,
       });
       const user = await this.userService.getUserByEmail(decoded.email.email);
-      return { id: user.id, name: user.name, email: user.email };
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        user_registration: user.user_registration,
+        company_registration: user.company_registration,
+      };
     } catch (err) {
       if (err.name == 'JsonWebTokenError')
         throw new HttpException('Token inválido', HttpStatus.BAD_REQUEST);

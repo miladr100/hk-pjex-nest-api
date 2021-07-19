@@ -31,7 +31,7 @@ export class UserRegisterService {
   }
 
   async saveUserRegister(userRegisterDto: UserRegisterDto, userId: string) {
-    await this.userService.findUserAsync(userId);
+    const user = await this.userService.findUserAsync(userId);
 
     const userRegister = await this.userRegisterModel
       .findOne({ user_id: userId })
@@ -48,6 +48,12 @@ export class UserRegisterService {
       user_id: userId,
     });
     const result = await createdUserRegister.save();
+
+    await this.userService.updateUser(userId, {
+      name: user.name,
+      email: user.email,
+      user_registration: true,
+    });
     return result.id as string;
   }
 
@@ -111,6 +117,7 @@ export class UserRegisterService {
       city: data.city,
       number: data.number,
       complement: data.complement,
+      updated_at: data.updated_at,
     };
   }
 }

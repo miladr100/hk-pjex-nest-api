@@ -37,7 +37,10 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
-      password: user.password,
+      user_registration: user.user_registration,
+      company_registration: user.company_registration,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
     })) as UserDto[];
   }
 
@@ -47,6 +50,10 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
+      user_registration: user.user_registration,
+      company_registration: user.company_registration,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
     } as UserDto;
   }
 
@@ -57,16 +64,20 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
-      password: user.password,
+      user_registration: user.user_registration,
+      company_registration: user.company_registration,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
     } as UserDto;
   }
 
-  async updateUser(prodId: string, userDto: UserDto) {
+  async updateUser(userId: string, userDto: UserDto) {
     if (Object.keys(userDto).length == 0)
       throw new HttpException('Erro, nenhum dado enviado.', 400);
     try {
+      userDto = { ...userDto, updated_at: new Date() };
       return this.userModel
-        .updateOne({ _id: prodId }, { $set: userDto }, { new: true })
+        .updateOne({ _id: userId }, { $set: userDto }, { new: true })
         .exec();
     } catch (err) {
       throw new HttpException('Erro do servidor.', 500);

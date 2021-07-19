@@ -9,5 +9,11 @@ export class UserDto {
   @IsEmail()
   email: string;
 
-  password: string;
+  password?: string;
+
+  user_registration?: boolean;
+
+  company_registration?: boolean;
+
+  updated_at?: Date;
 }

@@ -1,7 +1,7 @@
 import { CloudinaryService } from './cloudinary.service';
 import { CloudinaryController } from './cloudinary.controller';
 import { Module } from '@nestjs/common';
-import { CloudinaryProvider } from 'src/users/register/cloudinary.provider';
+import { CloudinaryProvider } from 'src/utils/cloudinary/cloudinary.provider';
 import { AuthModule } from 'src/auth/auth.module';
 import { ImageRegister, ImageSchema } from './image.entity';
 import { MongooseModule } from '@nestjs/mongoose';
