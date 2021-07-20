@@ -64,6 +64,7 @@ export class UsersService {
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
       user_registration: user.user_registration,
       company_registration: user.company_registration,
       created_at: user.created_at,
